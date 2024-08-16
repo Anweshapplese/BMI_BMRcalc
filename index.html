@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI & BMR Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #ffffffcc;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results p {
+            font-size: 18px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #e9f7ef;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            color: #155724;
+        }
+
+        .form-group.error input {
+            border-color: red;
+        }
+
+        .form-group.error label {
+            color: red;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculate your BMI & BMR</h1>
+        <div class="form-group" id="weight-group">
+            <label for="weight">Weight (kg):</label>
+            <input type="number" id="weight" required>
+            <div class="error-message" id="weight-error"></div>
+        </div>
+        <div class="form-group" id="height-group">
+            <label for="height">Height (cm):</label>
+            <input type="number" id="height" required>
+            <div class="error-message" id="height-error"></div>
+        </div>
+        <div class="form-group" id="age-group">
+            <label for="age">Age (years):</label>
+            <input type="number" id="age" required>
+            <div class="error-message" id="age-error"></div>
+        </div>
+        <div class="form-group" id="gender-group">
+            <label for="gender">Gender:</label>
+            <select id="gender" required>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+            </select>
+        </div>
+        <button onclick="calculate()">Calculate</button>
+        <div class="results">
+            <p id="bmiResult"></p>
+            <p id="bmrResult"></p>
+        </div>
+    </div>
+    <script>
+        function calculate() {
+    // Clear previous error messages
+    document.querySelectorAll('.error-message').forEach(function(el) {
+        el.innerText = '';
+    });
+    document.querySelectorAll('.form-group').forEach(function(el) {
+        el.classList.remove('error');
+    });
+
+    const weight = parseFloat(document.getElementById('weight').value);
+    const heightCm = parseFloat(document.getElementById('height').value);
+    const age = parseInt(document.getElementById('age').value);
+    const gender = document.getElementById('gender').value;
+
+    let hasError = false;
+
+    if (isNaN(weight) || weight <= 0) {
+        document.getElementById('weight-error').innerText = 'Please enter a valid weight.';
+        document.getElementById('weight-group').classList.add('error');
+        hasError = true;
+    }
+
+    if (isNaN(heightCm) || heightCm <= 0) {
+        document.getElementById('height-error').innerText = 'Please enter a valid height.';
+        document.getElementById('height-group').classList.add('error');
+        hasError = true;
+    }
+
+    if (isNaN(age) || age <= 0) {
+        document.getElementById('age-error').innerText = 'Please enter a valid age.';
+        document.getElementById('age-group').classList.add('error');
+        hasError = true;
+    }
+
+    if (hasError) {
+        return; // Stop further processing if there's an error
+    }
+
+    const heightM = heightCm / 100; // Convert height to meters
+    const bmi = weight / (heightM * heightM);
+
+    let bmr;
+    if (gender === 'M') {
+        bmr = 10 * weight + 6.25 * heightCm - 5 * age + 5;
+    } else {
+        bmr = 10 * weight + 6.25 * heightCm - 5 * age - 161;
+    }
+
+    // Update results
+    document.getElementById('bmiResult').innerText = `BMI: ${bmi.toFixed(2)}`;
+    document.getElementById('bmrResult').innerText = `BMR: ${bmr.toFixed(2)} calories/day`;
+}
+</script>
+</body>
